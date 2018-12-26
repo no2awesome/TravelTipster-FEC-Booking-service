@@ -7,14 +7,25 @@
   "engines": {
     "node": ">=6.13.0"
   },
-  "scripts": {},
+  "scripts": {
+    "start": "nodemon server/index.js --inspect",
+    "react-dev": "webpack -d --watch"
+  },
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "jquery": "^3.3.1",
     "mysql": "^2.16.0",
     "mysql2": "^1.6.4",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
     "sequelize": "^4.42.0"
   },
   "devDependencies": {
-    "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor",
-    "faker": "^4.1.0"
+    "babel-core": "^6.21.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-es2015": "^6.18.0",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^3.1.2"
   }
 }
