@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 var faker = require("faker");
 
 const sequelize = new Sequelize(
-  "mysql://root:password@localhost:3306/tripadvisor"
+  "mysql://root:password@localhost:3306/traveltipster"
 );
 sequelize
   .authenticate()

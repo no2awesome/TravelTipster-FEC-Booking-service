@@ -9,7 +9,7 @@ let connection = db.createConnection({
   host: "localhost",
   user: "root",
   password: "password",
-  database: "tripadvisor"
+  database: "traveltipster"
 });
 
 connection.connect();

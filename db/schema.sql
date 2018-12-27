@@ -1,5 +1,5 @@
-create database tripadvisor;
-use tripadvisor;
+create database traveltipster;
+use traveltipster;
 
 create table hotel (id int, name varchar(50), primary key(id));
 
