@@ -38,9 +38,10 @@ const Availability = sequelize.define("availability", {
 });
 const Op = Sequelize.Op
 
-exports.getAavilabilities = (hotel_id, check_in_date, check_out_date, callback) => {
-  Availability.findAll({
-    attributes: ['room_type_id', 'date', 'brokerage_id', 'price'],
+exports.getAavilabilities = async (hotel_id, check_in_date, check_out_date, callback) => {
+  let result = await Availability.findAll({
+    attributes: ['room_type_id', 'brokerage_id', [sequelize.fn('SUM', sequelize.col('price')), 'price']],
+    group: ['room_type_id', 'brokerage_id'],
     where: {
       date: {
         [Op.between]: [check_in_date, check_out_date]
@@ -52,7 +53,7 @@ exports.getAavilabilities = (hotel_id, check_in_date, check_out_date, callback) 
         [Op.eq]: null
       }
     }
-  }).then(results => {
-    callback(null, results);
-  })
+  });
+  callback(null, result);
+  
 }
