@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const db = require('../db/db');
 
@@ -11,7 +12,11 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use(express.static(__dirname + '/../react-client/dist'));
+app.use(express.static('public'));
+app.get('/:hotel_id/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public', 'index.html'))
+});
+
 
 app.get('/:hotel_id/vacancy', (req, res) => {
   //TODO - your code here!
