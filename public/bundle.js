@@ -445,8 +445,6 @@ var Checkin = function (_React$Component3) {
   return Checkin;
 }(_react2.default.Component);
 
-// export default App;
-
 /***/ }),
 
 /***/ "./client/index.js":

@@ -197,5 +197,3 @@ class Checkin extends React.Component {
     );
   }
 }
-
-// export default App;
