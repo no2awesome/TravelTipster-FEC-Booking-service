@@ -137,7 +137,8 @@ var App = function (_React$Component) {
       view: "checkin",
       check_in_date: null,
       check_out_date: null,
-      dateInputToggle: true
+      dateInputToggle: true,
+      offerData: null
     };
     _this.handleCheckin = _this.handleCheckin.bind(_this);
     _this.enterCheckin = _this.enterCheckin.bind(_this);
@@ -154,19 +155,25 @@ var App = function (_React$Component) {
   }, {
     key: "enterCheckin",
     value: function enterCheckin(year, month, date) {
-      month = month.toString().padStart(2, '0');
-      date = date.toString().padStart(2, '0');
+      var _this2 = this;
+
+      month = month.toString().padStart(2, "0");
+      date = date.toString().padStart(2, "0");
       if (this.state.dateInputToggle) {
         this.setState({
-          check_in_date: year + "-" + month + "-" + date,
+          check_in_date: "" + year + month + date,
+          check_out_date: null,
+          offerData: null,
           dateInputToggle: !this.state.dateInputToggle
         });
       } else {
-        if (this.state.check_in_date < year + "-" + month + "-" + date) {
-          _jquery2.default.get('http://127.0.0.1:3000/0/vacancy?check_in_date=20190101&check_out_date=20190103&number_of_rooms=1&number_of_adults=2&number_of_children=2');
-          this.setState({
-            check_out_date: year + "-" + month + "-" + date,
-            dateInputToggle: !this.state.dateInputToggle
+        if (this.state.check_in_date < "" + year + month + date) {
+          _jquery2.default.get(window.location.href + "vacancy?check_in_date=" + this.state.check_in_date + "&check_out_date=" + year + month + date + "&number_of_rooms=1&number_of_adults=2&number_of_children=2", function (offerData) {
+            _this2.setState({
+              check_out_date: "" + year + month + date,
+              dateInputToggle: !_this2.state.dateInputToggle,
+              offerData: offerData
+            });
           });
         }
       }
@@ -180,7 +187,8 @@ var App = function (_React$Component) {
         return _react2.default.createElement(Checkin, {
           check_in_date: this.state.check_in_date,
           check_out_date: this.state.check_out_date,
-          onclickin: this.enterCheckin
+          onclickin: this.enterCheckin,
+          offerData: this.state.offerData
         });
       }
     }
@@ -233,54 +241,72 @@ var Checkin = function (_React$Component3) {
   }
 
   _createClass(Checkin, [{
+    key: "offerData",
+    value: function offerData() {
+      if (this.props.offerData) {
+        console.table(this.props.offerData);
+        return this.props.offerData.map(function (offer) {
+          return _react2.default.createElement(
+            "div",
+            null,
+            offer.price
+          );
+        });
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var today = new Date();
       var thisYear = today.getFullYear();
       var thisMonth = today.getMonth();
       var nextMonth = new Date();
       nextMonth.setMonth(thisMonth + 1);
-      var thisMonthDates = [];
-      for (var i = 1; i <= new Date(new Date().getFullYear(), thisMonth + 1, 0).getDate(); i++) {
-        thisMonthDates.push(i);
-      }
-      thisMonthDates = thisMonthDates.map(function (day) {
-        if (day < today.getDate()) {
-          return _react2.default.createElement(
-            "button",
-            { disabled: true },
-            day
-          );
-        } else {
-          return _react2.default.createElement(
-            "button",
-            {
-              onClick: function onClick() {
-                return _this4.props.onclickin(thisYear, thisMonth + 1, day);
-              }
-            },
-            day
-          );
-        }
-      });
+      var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-      var nextMonthDates = [];
-      for (var _i = 1; _i <= new Date(thisYear, thisMonth + 2, 0).getDate(); _i++) {
-        nextMonthDates.push(_i);
-      }
-      nextMonthDates = nextMonthDates.map(function (day) {
-        return _react2.default.createElement(
-          "button",
-          {
-            onClick: function onClick() {
-              return _this4.props.onclickin(nextMonth.getFullYear(), nextMonth.getMonth() + 1, day);
-            }
-          },
-          day
-        );
-      });
+      var createCalendar = function createCalendar(month) {
+        var MonthDates = [];
+        var endOfDayOfMonth = new Date(new Date().getFullYear(), month + 1, 0);
+        for (var i = 1; i <= endOfDayOfMonth.getDate(); i++) {
+          var day = new Date();
+          day.setMonth(month);
+          day.setDate(i);
+          var week = Math.ceil((day.getDate() - day.getDay() - 1) / 7);
+          if (!MonthDates[week]) MonthDates.push([]);
+          MonthDates[week].push(i);
+        }
+        while (MonthDates[0].length < 7) {
+          MonthDates[0].unshift(null);
+        }
+        MonthDates = MonthDates.map(function (dates) {
+          return _react2.default.createElement(
+            "tr",
+            null,
+            dates.map(function (day) {
+              if (month === thisMonth && day < today.getDate()) {
+                return _react2.default.createElement(
+                  "td",
+                  null,
+                  day
+                );
+              } else {
+                return _react2.default.createElement(
+                  "td",
+                  { "class": "enabled",
+                    onClick: function onClick() {
+                      return _this5.props.onclickin(endOfDayOfMonth.getFullYear(), endOfDayOfMonth.getMonth() + 1, day);
+                    }
+                  },
+                  day
+                );
+              }
+            })
+          );
+        });
+        return MonthDates;
+      };
 
       return _react2.default.createElement(
         "div",
@@ -299,17 +325,118 @@ var Checkin = function (_React$Component3) {
         ),
         _react2.default.createElement(
           "div",
-          { "class": "check" },
-          thisMonth + 1,
-          _react2.default.createElement("br", null),
-          thisMonthDates
+          { "class": "row" },
+          _react2.default.createElement(
+            "div",
+            { "class": "column" },
+            _react2.default.createElement("br", null),
+            monthNames[thisMonth],
+            " ",
+            thisYear,
+            _react2.default.createElement(
+              "table",
+              null,
+              _react2.default.createElement("tr", null),
+              _react2.default.createElement(
+                "tr",
+                null,
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Sun"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Mon"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Tue"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Wed"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Thu"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Fri"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Sat"
+                )
+              ),
+              createCalendar(thisMonth)
+            )
+          ),
+          _react2.default.createElement(
+            "div",
+            { "class": "column" },
+            monthNames[(thisMonth + 1) % 12],
+            " ",
+            thisYear,
+            _react2.default.createElement("br", null),
+            _react2.default.createElement(
+              "table",
+              null,
+              _react2.default.createElement("tr", null),
+              _react2.default.createElement(
+                "tr",
+                null,
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Sun"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Mon"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Tue"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Wed"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Thu"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Fri"
+                ),
+                _react2.default.createElement(
+                  "th",
+                  null,
+                  "Sat"
+                )
+              ),
+              createCalendar(thisMonth + 1)
+            )
+          )
         ),
         _react2.default.createElement(
           "div",
-          { "class": "check" },
-          nextMonth.getMonth() + 1,
-          _react2.default.createElement("br", null),
-          nextMonthDates
+          null,
+          this.offerData()
         )
       );
     }
@@ -389,7 +516,7 @@ if(false) {}
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".column {\n  float: left;\n  width: 200px;\n}", ""]);
+exports.push([module.i, ".column {\n  float: left;\n  width: 50%;\n}\n\ntable, th, td {\n  border-collapse: collapse;\n}\nth, td {\n  padding: 15px;\n}\n.enabled:hover{\n  cursor: pointer; \n}\n\n/* Clear floats after the columns */\n.row:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}", ""]);
 
 
 

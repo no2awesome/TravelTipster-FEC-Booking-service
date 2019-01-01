@@ -11,7 +11,8 @@ export default class App extends React.Component {
       view: "checkin",
       check_in_date: null,
       check_out_date: null,
-      dateInputToggle: true
+      dateInputToggle: true,
+      offerData: null
     };
     this.handleCheckin = this.handleCheckin.bind(this);
     this.enterCheckin = this.enterCheckin.bind(this);
@@ -24,20 +25,29 @@ export default class App extends React.Component {
   }
 
   enterCheckin(year, month, date) {
-    month = month.toString().padStart(2,'0');
-    date = date.toString().padStart(2,'0');
+    month = month.toString().padStart(2, "0");
+    date = date.toString().padStart(2, "0");
     if (this.state.dateInputToggle) {
       this.setState({
-        check_in_date: `${year}-${month}-${date}`,
+        check_in_date: `${year}${month}${date}`,
+        check_out_date: null,
+        offerData: null,
         dateInputToggle: !this.state.dateInputToggle
       });
     } else {
-      if (this.state.check_in_date < `${year}-${month}-${date}`) {
-        $.get('http://127.0.0.1:3000/0/vacancy?check_in_date=20190101&check_out_date=20190103&number_of_rooms=1&number_of_adults=2&number_of_children=2')
-        this.setState({
-          check_out_date: `${year}-${month}-${date}`,
-          dateInputToggle: !this.state.dateInputToggle
-        });
+      if (this.state.check_in_date < `${year}${month}${date}`) {
+        $.get(
+          `${window.location.href}vacancy?check_in_date=${
+            this.state.check_in_date
+          }&check_out_date=${year}${month}${date}&number_of_rooms=1&number_of_adults=2&number_of_children=2`,
+          offerData => {
+            this.setState({
+              check_out_date: `${year}${month}${date}`,
+              dateInputToggle: !this.state.dateInputToggle,
+              offerData
+            });
+          }
+        );
       }
     }
   }
@@ -51,6 +61,7 @@ export default class App extends React.Component {
           check_in_date={this.state.check_in_date}
           check_out_date={this.state.check_out_date}
           onclickin={this.enterCheckin}
+          offerData={this.state.offerData}
         />
       );
     }
@@ -71,66 +82,117 @@ class Default extends React.Component {
 }
 
 class Checkin extends React.Component {
+  offerData() {
+    if (this.props.offerData) {
+      console.table(this.props.offerData);
+      return this.props.offerData.map(offer => <div>{offer.price}</div>);
+    }
+  }
+
   render() {
     let today = new Date();
     let thisYear = today.getFullYear();
     let thisMonth = today.getMonth();
     let nextMonth = new Date();
     nextMonth.setMonth(thisMonth + 1);
-    let thisMonthDates = [];
-    for (
-      let i = 1;
-      i <= new Date(new Date().getFullYear(), thisMonth + 1, 0).getDate();
-      i++
-    ) {
-      thisMonthDates.push(i);
-    }
-    thisMonthDates = thisMonthDates.map(day => {
-      if (day < today.getDate()) {
-        return <button disabled>{day}</button>;
-      } else {
-        return (
-          <button
-            onClick={() => this.props.onclickin(thisYear, thisMonth + 1, day)}
-          >
-            {day}
-          </button>
-        );
-      }
-    });
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
 
-    let nextMonthDates = [];
-    for (let i = 1; i <= new Date(thisYear, thisMonth + 2, 0).getDate(); i++) {
-      nextMonthDates.push(i);
-    }
-    nextMonthDates = nextMonthDates.map(day => (
-      <button
-        onClick={() =>
-          this.props.onclickin(
-            nextMonth.getFullYear(),
-            nextMonth.getMonth() + 1,
-            day
-          )
-        }
-      >
-        {day}
-      </button>
-    ));
+    let createCalendar = month => {
+      let MonthDates = [];
+      let endOfDayOfMonth = new Date(new Date().getFullYear(), month + 1, 0);
+      for (let i = 1; i <= endOfDayOfMonth.getDate(); i++) {
+        let day = new Date();
+        day.setMonth(month);
+        day.setDate(i);
+        let week = Math.ceil((day.getDate() - day.getDay() - 1) / 7);
+        if (!MonthDates[week]) MonthDates.push([]);
+        MonthDates[week].push(i);
+      }
+      while (MonthDates[0].length < 7) {
+        MonthDates[0].unshift(null);
+      }
+      MonthDates = MonthDates.map(dates => {
+        return (
+          <tr>
+            {dates.map(day => {
+              if (month === thisMonth && day < today.getDate()) {
+                return <td >{day}</td>;
+              } else {
+                return (
+                  <td class='enabled'
+                    onClick={() =>
+                      this.props.onclickin(
+                        endOfDayOfMonth.getFullYear(),
+                        endOfDayOfMonth.getMonth() + 1,
+                        day
+                      )
+                    }
+                  >
+                    {day}
+                  </td>
+                );
+              }
+            })}
+          </tr>
+        );
+      });
+      return MonthDates;
+    };
 
     return (
       <div>
         <div>Check In {this.props.check_in_date}</div>
         <div>Check Out {this.props.check_out_date}</div>
-        <div class="check">
-          {thisMonth + 1}
-          <br />
-          {thisMonthDates}
+        <div class="row">
+          <div class="column">
+            <br />
+            {monthNames[thisMonth]} {thisYear}
+            <table>
+              <tr />
+              <tr>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+              </tr>
+              {createCalendar(thisMonth)}
+            </table>
+          </div>
+          <div class="column">
+            {monthNames[(thisMonth + 1) % 12]} {thisYear}
+            <br />
+            <table>
+              <tr />
+              <tr>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+              </tr>
+              {createCalendar(thisMonth + 1)}
+            </table>
+          </div>
         </div>
-        <div class="check">
-          {nextMonth.getMonth() + 1}
-          <br />
-          {nextMonthDates}
-        </div>
+        <div>{this.offerData()}</div>
       </div>
     );
   }

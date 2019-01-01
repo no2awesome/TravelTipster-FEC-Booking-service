@@ -39,6 +39,7 @@ const Availability = sequelize.define("availability", {
 const Op = Sequelize.Op
 
 exports.getAavilabilities = async (hotel_id, check_in_date, check_out_date, callback) => {
+  check_out_date--;
   let result = await Availability.findAll({
     attributes: ['room_type_id', 'brokerage_id', [sequelize.fn('SUM', sequelize.col('price')), 'price']],
     group: ['room_type_id', 'brokerage_id'],
