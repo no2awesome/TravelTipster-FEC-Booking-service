@@ -1,0 +1,21 @@
+.column {
+  float: left;
+  width: 50%;
+}
+
+table, th, td {
+  border-collapse: collapse;
+}
+th, td {
+  padding: 15px;
+}
+.enabled:hover{
+  cursor: pointer; 
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}

@@ -66,7 +66,7 @@ for (let i = 0; i < 100; i++) {
           date: parseInt("201901" + l.toString().padStart(2, "0")),
           brokerage_id: k,
           reservation_id: null,
-          price: Math.floor(Math.random() * 900 + 30)
+          price: Math.floor(Math.random() * 50 + 100)
         });
       }
     }
