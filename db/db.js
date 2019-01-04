@@ -1,8 +1,7 @@
 const Sequelize = require("sequelize");
-let config = require('./config')
 
 const sequelize = new Sequelize(
-  `mysql://root:password@${config.hostaname}:3306/traveltipster`
+  `mysql://root:password@dbserver:3306/traveltipster`
 );
 sequelize
   .authenticate()
