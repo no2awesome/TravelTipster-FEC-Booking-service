@@ -1,7 +1,8 @@
 const Sequelize = require("sequelize");
+let config = require('./config')
 
 const sequelize = new Sequelize(
-  "mysql://root:password@localhost:3306/traveltipster"
+  `mysql://root:password@${config.hostaname}:3306/traveltipster`
 );
 sequelize
   .authenticate()
@@ -37,20 +38,23 @@ const Availability = sequelize.define("availability", {
   }
 });
 const brokerage = sequelize.define('brokerage', {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true
-    },
-    name: {
-      type: Sequelize.STRING
-    }
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true
+  },
+  name: {
+    type: Sequelize.STRING
   }
-)
+})
 
 const Op = Sequelize.Op
 
-brokerage.hasMany(Availability, {foreignKey: 'id'})
-Availability.belongsTo(brokerage, {foreignKey: 'brokerage_id'})
+brokerage.hasMany(Availability, {
+  foreignKey: 'id'
+})
+Availability.belongsTo(brokerage, {
+  foreignKey: 'brokerage_id'
+})
 
 
 exports.getAavilabilities = async (hotel_id, check_in_date, check_out_date, callback) => {
@@ -60,9 +64,9 @@ exports.getAavilabilities = async (hotel_id, check_in_date, check_out_date, call
       model: brokerage,
       required: true,
       attributes: ['name']
-     }],
-    attributes: ['room_type_id',  [sequelize.fn('SUM', sequelize.col('price')), 'price']],
-    group: ['room_type_id', 'brokerage_id','name'],
+    }],
+    attributes: ['room_type_id', [sequelize.fn('SUM', sequelize.col('price')), 'price']],
+    group: ['room_type_id', 'brokerage_id', 'name'],
     where: {
       date: {
         [Op.between]: [check_in_date, check_out_date]
