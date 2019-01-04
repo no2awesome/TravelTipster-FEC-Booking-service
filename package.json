@@ -8,7 +8,8 @@
     "node": ">=6.13.0"
   },
   "scripts": {
-    "start": "nodemon server/index.js --inspect",
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js --inspect",
     "react-dev": "webpack --mode development --watch",
     "seed": "mysql -uroot -ppassword < db/schema.sql && node db/seed.js && node db/seed2.js",
     "jest": {
