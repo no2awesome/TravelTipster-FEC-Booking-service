@@ -134,7 +134,7 @@ var App = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
     _this.state = {
-      view: "checkin",
+      view: 'checkin',
       check_in_date: null,
       check_out_date: null,
       dateInputToggle: true,
@@ -146,31 +146,31 @@ var App = function (_React$Component) {
   }
 
   _createClass(App, [{
-    key: "handleCheckin",
+    key: 'handleCheckin',
     value: function handleCheckin() {
       this.setState({
-        view: "checkin"
+        view: 'checkin'
       });
     }
   }, {
-    key: "enterCheckin",
+    key: 'enterCheckin',
     value: function enterCheckin(year, month, date) {
       var _this2 = this;
 
-      month = month.toString().padStart(2, "0");
-      date = date.toString().padStart(2, "0");
+      month = month.toString().padStart(2, '0');
+      date = date.toString().padStart(2, '0');
       if (this.state.dateInputToggle) {
         this.setState({
-          check_in_date: "" + year + month + date,
+          check_in_date: '' + year + month + date,
           check_out_date: null,
           offerData: null,
           dateInputToggle: !this.state.dateInputToggle
         });
       } else {
-        if (this.state.check_in_date < "" + year + month + date) {
-          _jquery2.default.get(window.location.href + "vacancy?check_in_date=" + this.state.check_in_date + "&check_out_date=" + year + month + date + "&number_of_rooms=1&number_of_adults=2&number_of_children=2", function (offerData) {
+        if (this.state.check_in_date < '' + year + month + date) {
+          _jquery2.default.get(window.location.href + 'vacancy?check_in_date=' + this.state.check_in_date + '&check_out_date=' + year + month + date + '&number_of_rooms=1&number_of_adults=2&number_of_children=2', function (offerData) {
             _this2.setState({
-              check_out_date: "" + year + month + date,
+              check_out_date: '' + year + month + date,
               dateInputToggle: !_this2.state.dateInputToggle,
               offerData: offerData
             });
@@ -179,11 +179,11 @@ var App = function (_React$Component) {
       }
     }
   }, {
-    key: "render",
+    key: 'render',
     value: function render() {
-      if (this.state.view === "default") {
+      if (this.state.view === 'default') {
         return _react2.default.createElement(Default, { onclick: this.handleCheckin });
-      } else if (this.state.view === "checkin") {
+      } else if (this.state.view === 'checkin') {
         return _react2.default.createElement(Checkin, {
           check_in_date: this.state.check_in_date,
           check_out_date: this.state.check_out_date,
@@ -209,20 +209,20 @@ var Default = function (_React$Component2) {
   }
 
   _createClass(Default, [{
-    key: "render",
+    key: 'render',
     value: function render() {
       return _react2.default.createElement(
-        "div",
-        { "class": "row" },
+        'div',
+        { 'class': 'row' },
         _react2.default.createElement(
-          "div",
-          { "class": "column", onClick: this.props.onclick },
-          "check in"
+          'div',
+          { 'class': 'column', onClick: this.props.onclick },
+          'check in'
         ),
         _react2.default.createElement(
-          "div",
-          { "class": "column" },
-          "check out"
+          'div',
+          { 'class': 'column' },
+          'check out'
         )
       );
     }
@@ -241,21 +241,49 @@ var Checkin = function (_React$Component3) {
   }
 
   _createClass(Checkin, [{
-    key: "offerData",
+    key: 'offerData',
     value: function offerData() {
       if (this.props.offerData) {
         console.table(this.props.offerData);
         return this.props.offerData.map(function (offer) {
           return _react2.default.createElement(
-            "div",
+            'tr',
             null,
-            offer.price
+            _react2.default.createElement(
+              'td',
+              null,
+              offer.brokerage.name
+            ),
+            _react2.default.createElement(
+              'td',
+              null,
+              _react2.default.createElement(
+                'b',
+                null,
+                '$',
+                offer.price
+              )
+            ),
+            _react2.default.createElement(
+              'td',
+              { 'class': 'deal' },
+              'View Deal'
+            )
           );
         });
       }
     }
   }, {
-    key: "render",
+    key: 'setStyleCheckIn',
+    value: function setStyleCheckIn(month, day) {
+      if (this.props.check_in_date && parseInt(this.props.check_in_date.slice(-4, -2)) === month + 1 && parseInt(this.props.check_in_date.slice(-2)) === day) {
+        return { border: '1px solid SeaGreen' };
+      } else {
+        return { border: 'white' };
+      }
+    }
+  }, {
+    key: 'render',
     value: function render() {
       var _this5 = this;
 
@@ -264,7 +292,7 @@ var Checkin = function (_React$Component3) {
       var thisMonth = today.getMonth();
       var nextMonth = new Date();
       nextMonth.setMonth(thisMonth + 1);
-      var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
       var createCalendar = function createCalendar(month) {
         var MonthDates = [];
@@ -280,21 +308,39 @@ var Checkin = function (_React$Component3) {
         while (MonthDates[0].length < 7) {
           MonthDates[0].unshift(null);
         }
+
         MonthDates = MonthDates.map(function (dates) {
           return _react2.default.createElement(
-            "tr",
+            'tr',
             null,
             dates.map(function (day) {
-              if (month === thisMonth && day < today.getDate()) {
+              if (month === thisMonth && day < today.getDate() || _this5.props.check_in_date && (month + 1).toString().padStart(2, '0') + (day && day.toString().padStart(2, '0')) < _this5.props.check_in_date.slice(-4)) {
                 return _react2.default.createElement(
-                  "td",
-                  null,
+                  'td',
+                  { 'class': 'past' },
                   day
+                );
+              } else if (month === thisMonth && day === today.getDate()) {
+                return _react2.default.createElement(
+                  'td',
+                  {
+                    style: _this5.setStyleCheckIn(month, day),
+                    'class': 'enabled today',
+                    onClick: function onClick() {
+                      return _this5.props.onclickin(endOfDayOfMonth.getFullYear(), endOfDayOfMonth.getMonth() + 1, day);
+                    }
+                  },
+                  _react2.default.createElement('br', null),
+                  day,
+                  _react2.default.createElement('br', null),
+                  '\u25CF'
                 );
               } else {
                 return _react2.default.createElement(
-                  "td",
-                  { "class": "enabled",
+                  'td',
+                  {
+                    style: _this5.setStyleCheckIn(month, day),
+                    'class': 'enabled',
                     onClick: function onClick() {
                       return _this5.props.onclickin(endOfDayOfMonth.getFullYear(), endOfDayOfMonth.getMonth() + 1, day);
                     }
@@ -309,124 +355,130 @@ var Checkin = function (_React$Component3) {
       };
 
       return _react2.default.createElement(
-        "div",
+        'div',
         null,
         _react2.default.createElement(
-          "div",
+          'div',
           null,
-          "Check In ",
+          'Check In ',
           this.props.check_in_date
         ),
         _react2.default.createElement(
-          "div",
+          'div',
           null,
-          "Check Out ",
+          'Check Out ',
           this.props.check_out_date
         ),
         _react2.default.createElement(
-          "div",
-          { "class": "row" },
+          'div',
+          { 'class': 'row' },
           _react2.default.createElement(
-            "div",
-            { "class": "column" },
-            _react2.default.createElement("br", null),
-            monthNames[thisMonth],
-            " ",
-            thisYear,
+            'div',
+            { 'class': 'column' },
             _react2.default.createElement(
-              "table",
+              'h2',
+              { 'class': 'month' },
+              monthNames[thisMonth],
+              ' ',
+              thisYear
+            ),
+            _react2.default.createElement(
+              'table',
               null,
-              _react2.default.createElement("tr", null),
+              _react2.default.createElement('tr', null),
               _react2.default.createElement(
-                "tr",
+                'tr',
                 null,
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Sun"
+                  'SUN'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Mon"
+                  'MON'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Tue"
+                  'TUE'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Wed"
+                  'WED'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Thu"
+                  'THU'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Fri"
+                  'FRI'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Sat"
+                  'SAT'
                 )
               ),
               createCalendar(thisMonth)
             )
           ),
           _react2.default.createElement(
-            "div",
-            { "class": "column" },
-            monthNames[(thisMonth + 1) % 12],
-            " ",
-            thisYear,
-            _react2.default.createElement("br", null),
+            'div',
+            { 'class': 'column' },
             _react2.default.createElement(
-              "table",
+              'h2',
+              { 'class': 'month' },
+              monthNames[(thisMonth + 1) % 12],
+              ' ',
+              thisYear
+            ),
+            _react2.default.createElement(
+              'table',
               null,
-              _react2.default.createElement("tr", null),
+              _react2.default.createElement('tr', null),
               _react2.default.createElement(
-                "tr",
+                'tr',
                 null,
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Sun"
+                  'SUN'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Mon"
+                  'MON'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Tue"
+                  'TUE'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Wed"
+                  'WED'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Thu"
+                  'THU'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Fri"
+                  'FRI'
                 ),
                 _react2.default.createElement(
-                  "th",
+                  'th',
                   null,
-                  "Sat"
+                  'SAT'
                 )
               ),
               createCalendar(thisMonth + 1)
@@ -434,9 +486,13 @@ var Checkin = function (_React$Component3) {
           )
         ),
         _react2.default.createElement(
-          "div",
+          'div',
           null,
-          this.offerData()
+          _react2.default.createElement(
+            'table',
+            { id: 'offers' },
+            this.offerData()
+          )
         )
       );
     }
@@ -514,7 +570,7 @@ if(false) {}
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".column {\n  float: left;\n  width: 50%;\n}\n\ntable, th, td {\n  border-collapse: collapse;\n}\nth, td {\n  padding: 15px;\n}\n.enabled:hover{\n  cursor: pointer; \n}\n\n/* Clear floats after the columns */\n.row:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}", ""]);
+exports.push([module.i, ".column {\n  float: left;\n  width: 50%;\n}\n\ntable,\nth,\ntd {\n  border-collapse: collapse;\n}\n\nth,\ntd {\n  font-size: 17px;\n  padding: 10px;\n}\n\n.enabled:hover {\n  cursor: pointer;\n  background-color: SeaGreen;\n  color: white;\n}\n\n.past {\n  color: silver;\n}\n\n.today {\n  vertical-align: super;\n  color: SeaGreen;\n}\n\n/* Clear floats after the columns */\n.row:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}\n\n#offers {\n  border-collapse: collapse;\n  width: fit-content;\n}\n\n#offers td,\n#offers th {\n  border: 1px solid #ddd;\n  padding: 16px;\n}\n\n#offers tr:hover {\n  background-color: #ddd;\n}\n\n#offers th {\n  padding-top: 12px;\n  padding-bottom: 12px;\n  text-align: left;\n  background-color: #4CAF50;\n  color: white;\n}\n\n.deal {\n  background-color: gold;\n}", ""]);
 
 
 

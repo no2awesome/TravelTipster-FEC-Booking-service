@@ -11,6 +11,9 @@
     "start": "nodemon server/index.js --inspect",
     "react-dev": "webpack --mode development --watch",
     "seed": "mysql -uroot -ppassword < db/schema.sql && node db/seed.js && node db/seed2.js",
+    "jest": {
+      "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js"
+    },
     "test": "jest"
   },
   "dependencies": {
@@ -33,8 +36,19 @@
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^2.1.0",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "17.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.11.0",
     "faker": "^4.1.0",
     "jest": "^23.6.0",
+    "jest-environment-enzyme": "^7.0.1",
+    "jest-enzyme": "^7.0.1",
     "style-loader": "^0.23.1",
     "webpack": "^4.8.3",
     "webpack-cli": "^3.1.2"

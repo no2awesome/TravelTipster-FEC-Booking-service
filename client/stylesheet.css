@@ -3,14 +3,31 @@
   width: 50%;
 }
 
-table, th, td {
+table,
+th,
+td {
   border-collapse: collapse;
 }
-th, td {
-  padding: 15px;
+
+th,
+td {
+  font-size: 17px;
+  padding: 10px;
 }
-.enabled:hover{
-  cursor: pointer; 
+
+.enabled:hover {
+  cursor: pointer;
+  background-color: SeaGreen;
+  color: white;
+}
+
+.past {
+  color: silver;
+}
+
+.today {
+  vertical-align: super;
+  color: SeaGreen;
 }
 
 /* Clear floats after the columns */
@@ -18,4 +35,31 @@ th, td {
   content: "";
   display: table;
   clear: both;
+}
+
+#offers {
+  border-collapse: collapse;
+  width: fit-content;
+}
+
+#offers td,
+#offers th {
+  border: 1px solid #ddd;
+  padding: 16px;
+}
+
+#offers tr:hover {
+  background-color: #ddd;
+}
+
+#offers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.deal {
+  background-color: gold;
 }

@@ -5,7 +5,7 @@ const path = require('path');
 const db = require('../db/db');
 
 const app = express();
-const PORT = 3000;
+const PORT = 8081;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -20,7 +20,7 @@ app.get('/:hotel_id/', (req, res) => {
 
 app.get('/:hotel_id/vacancy', (req, res) => {
   //TODO - your code here!
-  db.getAavilabilities(req.params.hotel_id, req.query.check_in_date,req.query.check_out_date, (err, result) => {
+  db.getAavilabilities(req.params.hotel_id, req.query.check_in_date, req.query.check_out_date, (err, result) => {
     if (err) {
       res.status(400).send({
         message: 'Error on reading database!'

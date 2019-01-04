@@ -36,13 +36,33 @@ const Availability = sequelize.define("availability", {
     type: Sequelize.INTEGER
   }
 });
+const brokerage = sequelize.define('brokerage', {
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true
+    },
+    name: {
+      type: Sequelize.STRING
+    }
+  }
+)
+
 const Op = Sequelize.Op
+
+brokerage.hasMany(Availability, {foreignKey: 'id'})
+Availability.belongsTo(brokerage, {foreignKey: 'brokerage_id'})
+
 
 exports.getAavilabilities = async (hotel_id, check_in_date, check_out_date, callback) => {
   check_out_date--;
   let result = await Availability.findAll({
-    attributes: ['room_type_id', 'brokerage_id', [sequelize.fn('SUM', sequelize.col('price')), 'price']],
-    group: ['room_type_id', 'brokerage_id'],
+    include: [{
+      model: brokerage,
+      required: true,
+      attributes: ['name']
+     }],
+    attributes: ['room_type_id',  [sequelize.fn('SUM', sequelize.col('price')), 'price']],
+    group: ['room_type_id', 'brokerage_id','name'],
     where: {
       date: {
         [Op.between]: [check_in_date, check_out_date]
@@ -55,6 +75,21 @@ exports.getAavilabilities = async (hotel_id, check_in_date, check_out_date, call
       }
     }
   });
+  // let result = await Availability.findAll({
+  //   attributes: ['room_type_id', 'brokerage_id', [sequelize.fn('SUM', sequelize.col('price')), 'price']],
+  //   group: ['room_type_id', 'brokerage_id'],
+  //   where: {
+  //     date: {
+  //       [Op.between]: [check_in_date, check_out_date]
+  //     },
+  //     hotel_id: {
+  //       [Op.eq]: hotel_id
+  //     },
+  //     reservation_id: {
+  //       [Op.eq]: null
+  //     }
+  //   }
+  // });
   callback(null, result);
-  
+
 }

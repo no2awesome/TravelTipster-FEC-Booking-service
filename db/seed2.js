@@ -13,6 +13,40 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
+  const Brokerage = sequelize.define('brokerage', {
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true
+    },
+    name: {
+      type: Sequelize.STRING
+    }
+  }
+)
+
+let brokerageSample = [];
+
+for (let i = 0; i < 100; i++) {
+  brokerageSample.push({
+    id: i,
+    name: faker.company.companyName()
+  });
+}
+
+Brokerage.sync({
+  force: true
+})
+.then(() => {
+  // Table created
+  Brokerage.bulkCreate(brokerageSample).then(() => {
+      sequelize.close();
+    })
+    .catch(errors => {
+      console.log(errors);
+      sequelize.close();
+    });
+})
+
 
 
 const Availability = sequelize.define("availability", {

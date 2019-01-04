@@ -19,10 +19,6 @@ for (let i = 0; i < 100; i++) {
 }
 
 for (let i = 0; i < 100; i++) {
-    connection.query(`insert into brokerage (id, name) values (${i}, ${connection.escape(faker.company.companyName())})`);
-}
-
-for (let i = 0; i < 100; i++) {
   for (let j = 0; j < 5; j++) {
     connection.query(
       `insert into hotel_room (hotel_id, room_type_id, name) values (${i}, ${j}, ${connection.escape(faker.random.word() + " room" )})`

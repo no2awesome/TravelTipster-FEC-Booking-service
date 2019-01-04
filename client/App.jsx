@@ -1,6 +1,6 @@
-import React from "react";
-import css from "./stylesheet.css";
-import $ from "jquery";
+import React from 'react';
+import css from './stylesheet.css';
+import $ from 'jquery';
 // import 'bootstrap';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -8,7 +8,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      view: "checkin",
+      view: 'checkin',
       check_in_date: null,
       check_out_date: null,
       dateInputToggle: true,
@@ -20,13 +20,13 @@ export default class App extends React.Component {
 
   handleCheckin() {
     this.setState({
-      view: "checkin"
+      view: 'checkin'
     });
   }
 
   enterCheckin(year, month, date) {
-    month = month.toString().padStart(2, "0");
-    date = date.toString().padStart(2, "0");
+    month = month.toString().padStart(2, '0');
+    date = date.toString().padStart(2, '0');
     if (this.state.dateInputToggle) {
       this.setState({
         check_in_date: `${year}${month}${date}`,
@@ -53,9 +53,9 @@ export default class App extends React.Component {
   }
 
   render() {
-    if (this.state.view === "default") {
+    if (this.state.view === 'default') {
       return <Default onclick={this.handleCheckin} />;
-    } else if (this.state.view === "checkin") {
+    } else if (this.state.view === 'checkin') {
       return (
         <Checkin
           check_in_date={this.state.check_in_date}
@@ -85,7 +85,27 @@ class Checkin extends React.Component {
   offerData() {
     if (this.props.offerData) {
       console.table(this.props.offerData);
-      return this.props.offerData.map(offer => <div>{offer.price}</div>);
+      return this.props.offerData.map(offer => (
+        <tr>
+          <td>{offer.brokerage.name}</td>
+          <td>
+            <b>${offer.price}</b>
+          </td>
+          <td class="deal">View Deal</td>
+        </tr>
+      ));
+    }
+  }
+
+  setStyleCheckIn(month, day) {
+    if (
+      this.props.check_in_date &&
+      parseInt(this.props.check_in_date.slice(-4, -2)) === month + 1 &&
+      parseInt(this.props.check_in_date.slice(-2)) === day
+    ) {
+      return { border: '1px solid SeaGreen' };
+    } else {
+      return { border: 'white' };
     }
   }
 
@@ -96,18 +116,18 @@ class Checkin extends React.Component {
     let nextMonth = new Date();
     nextMonth.setMonth(thisMonth + 1);
     const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
     ];
 
     let createCalendar = month => {
@@ -124,15 +144,43 @@ class Checkin extends React.Component {
       while (MonthDates[0].length < 7) {
         MonthDates[0].unshift(null);
       }
+
       MonthDates = MonthDates.map(dates => {
         return (
           <tr>
             {dates.map(day => {
-              if (month === thisMonth && day < today.getDate()) {
-                return <td >{day}</td>;
+              if (
+                (month === thisMonth && day < today.getDate()) ||
+                (this.props.check_in_date &&
+                  (month + 1).toString().padStart(2, '0') +
+                    (day && day.toString().padStart(2, '0')) <
+                    this.props.check_in_date.slice(-4))
+              ) {
+                return <td class="past">{day}</td>;
+              } else if (month === thisMonth && day === today.getDate()) {
+                return (
+                  <td
+                    style={this.setStyleCheckIn(month, day)}
+                    class="enabled today"
+                    onClick={() =>
+                      this.props.onclickin(
+                        endOfDayOfMonth.getFullYear(),
+                        endOfDayOfMonth.getMonth() + 1,
+                        day
+                      )
+                    }
+                  >
+                    <br />
+                    {day}
+                    <br />
+                    &#9679;
+                  </td>
+                );
               } else {
                 return (
-                  <td class='enabled'
+                  <td
+                    style={this.setStyleCheckIn(month, day)}
+                    class="enabled"
                     onClick={() =>
                       this.props.onclickin(
                         endOfDayOfMonth.getFullYear(),
@@ -158,41 +206,45 @@ class Checkin extends React.Component {
         <div>Check Out {this.props.check_out_date}</div>
         <div class="row">
           <div class="column">
-            <br />
-            {monthNames[thisMonth]} {thisYear}
+            <h2 class="month">
+              {monthNames[thisMonth]} {thisYear}
+            </h2>
             <table>
               <tr />
               <tr>
-                <th>Sun</th>
-                <th>Mon</th>
-                <th>Tue</th>
-                <th>Wed</th>
-                <th>Thu</th>
-                <th>Fri</th>
-                <th>Sat</th>
+                <th>SUN</th>
+                <th>MON</th>
+                <th>TUE</th>
+                <th>WED</th>
+                <th>THU</th>
+                <th>FRI</th>
+                <th>SAT</th>
               </tr>
               {createCalendar(thisMonth)}
             </table>
           </div>
           <div class="column">
-            {monthNames[(thisMonth + 1) % 12]} {thisYear}
-            <br />
+            <h2 class="month">
+              {monthNames[(thisMonth + 1) % 12]} {thisYear}
+            </h2>
             <table>
               <tr />
               <tr>
-                <th>Sun</th>
-                <th>Mon</th>
-                <th>Tue</th>
-                <th>Wed</th>
-                <th>Thu</th>
-                <th>Fri</th>
-                <th>Sat</th>
+                <th>SUN</th>
+                <th>MON</th>
+                <th>TUE</th>
+                <th>WED</th>
+                <th>THU</th>
+                <th>FRI</th>
+                <th>SAT</th>
               </tr>
               {createCalendar(thisMonth + 1)}
             </table>
           </div>
         </div>
-        <div>{this.offerData()}</div>
+        <div>
+          <table id="offers">{this.offerData()}</table>
+        </div>
       </div>
     );
   }
