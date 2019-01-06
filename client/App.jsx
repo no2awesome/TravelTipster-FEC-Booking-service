@@ -209,14 +209,28 @@ class Checkin extends React.Component {
         return (
           <tr>
             {dates.map(day => {
-              if (
-                (month === thisMonth && day < today.getDate()) ||
-                (this.props.check_in_date &&
-                  (month + 1).toString().padStart(2, '0') +
-                    (day && day.toString().padStart(2, '0')) <
-                    this.props.check_in_date.slice(-4))
-              ) {
+              if (month === thisMonth && day < today.getDate()) {
                 return <td class="past">{day}</td>;
+              } else if (
+                this.props.check_in_date &&
+                (month + 1).toString().padStart(2, '0') + (day && day.toString().padStart(2, '0')) <
+                  this.props.check_in_date.slice(-4)
+              ) {
+                return (
+                  <td
+                    style={this.setStyleCheckIn(month, day)}
+                    class="enabled past"
+                    onClick={() =>
+                      this.props.onclickin(
+                        endOfDayOfMonth.getFullYear(),
+                        endOfDayOfMonth.getMonth() + 1,
+                        day
+                      )
+                    }
+                  >
+                    {day}
+                  </td>
+                );
               } else if (month === thisMonth && day === today.getDate()) {
                 return (
                   <td

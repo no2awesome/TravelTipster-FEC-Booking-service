@@ -372,10 +372,22 @@ var Checkin = function (_React$Component3) {
             'tr',
             null,
             dates.map(function (day) {
-              if (month === thisMonth && day < today.getDate() || _this5.props.check_in_date && (month + 1).toString().padStart(2, '0') + (day && day.toString().padStart(2, '0')) < _this5.props.check_in_date.slice(-4)) {
+              if (month === thisMonth && day < today.getDate()) {
                 return _react2.default.createElement(
                   'td',
                   { 'class': 'past' },
+                  day
+                );
+              } else if (_this5.props.check_in_date && (month + 1).toString().padStart(2, '0') + (day && day.toString().padStart(2, '0')) < _this5.props.check_in_date.slice(-4)) {
+                return _react2.default.createElement(
+                  'td',
+                  {
+                    style: _this5.setStyleCheckIn(month, day),
+                    'class': 'enabled past',
+                    onClick: function onClick() {
+                      return _this5.props.onclickin(endOfDayOfMonth.getFullYear(), endOfDayOfMonth.getMonth() + 1, day);
+                    }
+                  },
                   day
                 );
               } else if (month === thisMonth && day === today.getDate()) {
