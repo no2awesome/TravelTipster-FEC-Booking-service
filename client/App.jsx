@@ -53,7 +53,7 @@ export default class App extends React.Component {
     } else {
       if (this.state.check_in_date < `${year}${month}${date}`) {
         $.get(
-          `http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/vacancy?check_in_date=${
+          `http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/0/vacancy?check_in_date=${
             this.state.check_in_date
           }&check_out_date=${year}${month}${date}&number_of_rooms=1&number_of_adults=2&number_of_children=2`,
           offerData => {

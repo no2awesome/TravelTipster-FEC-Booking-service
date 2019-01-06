@@ -183,7 +183,7 @@ var App = function (_React$Component) {
         });
       } else {
         if (this.state.check_in_date < '' + year + month + date) {
-          _jquery2.default.get('http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/vacancy?check_in_date=' + this.state.check_in_date + '&check_out_date=' + year + month + date + '&number_of_rooms=1&number_of_adults=2&number_of_children=2', function (offerData) {
+          _jquery2.default.get('http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/0/vacancy?check_in_date=' + this.state.check_in_date + '&check_out_date=' + year + month + date + '&number_of_rooms=1&number_of_adults=2&number_of_children=2', function (offerData) {
             _this2.setState({
               check_out_date: '' + year + month + date,
               dateInputToggle: !_this2.state.dateInputToggle,
