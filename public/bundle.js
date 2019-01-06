@@ -134,7 +134,7 @@ var App = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
     _this.state = {
-      view: 'checkin',
+      view: 'default',
       check_in_date: null,
       check_out_date: null,
       dateInputToggle: true,
@@ -144,6 +144,21 @@ var App = function (_React$Component) {
     _this.enterCheckin = _this.enterCheckin.bind(_this);
     return _this;
   }
+
+  // componentDidMount() {
+  //   Date.prototype.yyyymmdd = function() {
+  //     var mm = this.getMonth() + 1; // getMonth() is zero-based
+  //     var dd = this.getDate();
+
+  //     return [this.getFullYear(), (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join('');
+  //   };
+
+  //   var date = new Date();
+
+  //   this.setState({
+  //     check_in_date: date.yyyymmdd()
+  //   });
+  // }
 
   _createClass(App, [{
     key: 'handleCheckin',
@@ -168,7 +183,7 @@ var App = function (_React$Component) {
         });
       } else {
         if (this.state.check_in_date < '' + year + month + date) {
-          _jquery2.default.get(window.location.href + 'vacancy?check_in_date=' + this.state.check_in_date + '&check_out_date=' + year + month + date + '&number_of_rooms=1&number_of_adults=2&number_of_children=2', function (offerData) {
+          _jquery2.default.get('http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/vacancy?check_in_date=' + this.state.check_in_date + '&check_out_date=' + year + month + date + '&number_of_rooms=1&number_of_adults=2&number_of_children=2', function (offerData) {
             _this2.setState({
               check_out_date: '' + year + month + date,
               dateInputToggle: !_this2.state.dateInputToggle,
@@ -182,7 +197,13 @@ var App = function (_React$Component) {
     key: 'render',
     value: function render() {
       if (this.state.view === 'default') {
-        return _react2.default.createElement(Default, { onclick: this.handleCheckin });
+        return _react2.default.createElement(Default, {
+          onclick: this.handleCheckin,
+          check_in_date: this.state.check_in_date,
+          check_out_date: this.state.check_out_date,
+          onclickin: this.enterCheckin,
+          offerData: this.state.offerData
+        });
       } else if (this.state.view === 'checkin') {
         return _react2.default.createElement(Checkin, {
           check_in_date: this.state.check_in_date,
@@ -202,27 +223,60 @@ exports.default = App;
 var Default = function (_React$Component2) {
   _inherits(Default, _React$Component2);
 
-  function Default() {
+  function Default(props) {
     _classCallCheck(this, Default);
 
-    return _possibleConstructorReturn(this, (Default.__proto__ || Object.getPrototypeOf(Default)).apply(this, arguments));
+    var _this3 = _possibleConstructorReturn(this, (Default.__proto__ || Object.getPrototypeOf(Default)).call(this, props));
+
+    _this3.state = {
+      hover: false
+    };
+    return _this3;
   }
 
   _createClass(Default, [{
+    key: 'handleMouseIn',
+    value: function handleMouseIn() {
+      this.setState({ hover: !this.state.hover });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var tooltipStyle = {
+        display: this.state.hover ? 'block' : 'none'
+      };
+
       return _react2.default.createElement(
         'div',
-        { 'class': 'row' },
+        null,
         _react2.default.createElement(
           'div',
-          { 'class': 'column', onClick: this.props.onclick },
-          'check in'
+          null,
+          _react2.default.createElement(
+            'button',
+            { 'class': 'checkin', onClick: this.props.onclick },
+            'Check In',
+            _react2.default.createElement('br', null),
+            this.props.check_in_date
+          ),
+          '\xA0\xA0\xA0\xA0\xA0\xA0',
+          _react2.default.createElement(
+            'button',
+            { 'class': 'checkout', onClick: this.props.onclick },
+            'Check Out',
+            _react2.default.createElement('br', null),
+            this.props.check_out_date
+          )
         ),
+        _react2.default.createElement('br', null),
         _react2.default.createElement(
           'div',
-          { 'class': 'column' },
-          'check out'
+          null,
+          _react2.default.createElement(
+            'button',
+            { 'class': 'guests' },
+            'Guests'
+          )
         )
       );
     }
@@ -245,7 +299,8 @@ var Checkin = function (_React$Component3) {
     value: function offerData() {
       if (this.props.offerData) {
         console.table(this.props.offerData);
-        return this.props.offerData.map(function (offer) {
+        var offerDataTop4 = this.props.offerData.slice(0, 3);
+        return offerDataTop4.map(function (offer) {
           return _react2.default.createElement(
             'tr',
             null,
@@ -356,16 +411,16 @@ var Checkin = function (_React$Component3) {
 
       return _react2.default.createElement(
         'div',
-        null,
+        { 'class': 'row' },
         _react2.default.createElement(
           'div',
-          null,
+          { 'class': 'column' },
           'Check In ',
           this.props.check_in_date
         ),
         _react2.default.createElement(
           'div',
-          null,
+          { 'class': 'column' },
           'Check Out ',
           this.props.check_out_date
         ),
@@ -570,7 +625,7 @@ if(false) {}
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".column {\n  float: left;\n  width: 50%;\n}\n\ntable,\nth,\ntd {\n  border-collapse: collapse;\n}\n\nth,\ntd {\n  font-size: 17px;\n  padding: 10px;\n}\n\n.enabled:hover {\n  cursor: pointer;\n  background-color: SeaGreen;\n  color: white;\n}\n\n.past {\n  color: silver;\n}\n\n.today {\n  vertical-align: super;\n  color: SeaGreen;\n}\n\n/* Clear floats after the columns */\n.row:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}\n\n#offers {\n  border-collapse: collapse;\n  width: fit-content;\n}\n\n#offers td,\n#offers th {\n  border: 1px solid #ddd;\n  padding: 16px;\n}\n\n#offers tr:hover {\n  background-color: #ddd;\n}\n\n#offers th {\n  padding-top: 12px;\n  padding-bottom: 12px;\n  text-align: left;\n  background-color: #4CAF50;\n  color: white;\n}\n\n.deal {\n  background-color: gold;\n}", ""]);
+exports.push([module.i, ".column {\n  float: left;\n  width: 50%;\n}\n\ntable,\nth,\ntd {\n  border-collapse: collapse;\n}\n\nth,\ntd {\n  font-size: 17px;\n  padding: 10px;\n}\n\n.enabled:hover {\n  cursor: pointer;\n  background-color: SeaGreen;\n  color: white;\n}\n\n.past {\n  color: silver;\n}\n\n.today {\n  vertical-align: super;\n  color: SeaGreen;\n}\n\n/* Clear floats after the columns */\n.row:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}\n\n#offers {\n  border-collapse: collapse;\n  width: fit-content;\n}\n\n#offers td,\n#offers th {\n  border: 1px solid #ddd;\n  padding: 16px;\n}\n\n#offers tr:hover {\n  background-color: #ddd;\n}\n\n#offers th {\n  padding-top: 12px;\n  padding-bottom: 12px;\n  text-align: left;\n  background-color: #4CAF50;\n  color: white;\n}\n\n.deal {\n  background-color: gold;\n}\n\n.tooltip {\n  position: relative;\n  display: inline-block;\n  border-bottom: 1px dotted black;\n}\n\n.checkin {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  margin-left: 8px;\n  border-left-width: 0;\n  box-shadow: -8px 0 0 #00a680;\n  height: 42px;\n  width: 166px;\n}\n\n.checkout {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  margin-left: 8px;\n  border-left-width: 0;\n  box-shadow: -8px 0 0 #ef6945;\n  height: 42px;\n  width: 166px;\n}\n\n.guests {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  height: 42px;\n  width: 350px;\n}\n\n.tooltip {\n  position: relative;\n  display: inline-block;\n  border-bottom: 1px dotted black;\n}\n\n.tooltiptext {\n  width: 120px;\n  background-color: #fff;\n  color: black;\n  text-align: center;\n  border-radius: 6px;\n  padding: 5px 0;\n  /*  position: absolute;*/\n  z-index: 1;\n  bottom: 125%;\n  left: 105%;\n  margin-left: -60px;\n  opacity: 1;\n  transition: opacity 0.3s;\n}", ""]);
 
 
 

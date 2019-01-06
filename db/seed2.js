@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 var faker = require("faker");
 
 const sequelize = new Sequelize(
-  "mysql://root:password@localhost:3306/traveltipster"
+  "mysql://root:password@aa1iibwgognyt5p.ccnl4smt7re2.us-west-2.rds.amazonaws.com:3306/traveltipster"
 );
 sequelize
   .authenticate()
@@ -13,16 +13,15 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
-  const Brokerage = sequelize.define('brokerage', {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true
-    },
-    name: {
-      type: Sequelize.STRING
-    }
+const Brokerage = sequelize.define('brokerage', {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true
+  },
+  name: {
+    type: Sequelize.STRING
   }
-)
+})
 
 let brokerageSample = [];
 
@@ -34,18 +33,18 @@ for (let i = 0; i < 100; i++) {
 }
 
 Brokerage.sync({
-  force: true
-})
-.then(() => {
-  // Table created
-  Brokerage.bulkCreate(brokerageSample).then(() => {
-      sequelize.close();
-    })
-    .catch(errors => {
-      console.log(errors);
-      sequelize.close();
-    });
-})
+    force: true
+  })
+  .then(() => {
+    // Table created
+    Brokerage.bulkCreate(brokerageSample).then(() => {
+        sequelize.close();
+      })
+      .catch(errors => {
+        console.log(errors);
+        sequelize.close();
+      });
+  })
 
 
 

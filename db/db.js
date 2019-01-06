@@ -1,7 +1,8 @@
 const Sequelize = require("sequelize");
 
 const sequelize = new Sequelize(
-  `mysql://root:password@aa1iibwgognyt5p.ccnl4smt7re2.us-west-2.rds.amazonaws.com:3306/traveltipster`
+  // `mysql://root:password@aa1iibwgognyt5p.ccnl4smt7re2.us-west-2.rds.amazonaws.com:3306/traveltipster`
+  `mysql://root:password@localhost:3306/traveltipster`
 );
 sequelize
   .authenticate()

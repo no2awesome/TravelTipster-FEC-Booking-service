@@ -63,3 +63,58 @@ td {
 .deal {
   background-color: gold;
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.checkin {
+  border: 1px solid rgb(214, 214, 214);
+  border-collapse: collapse;
+  margin-left: 8px;
+  border-left-width: 0;
+  box-shadow: -8px 0 0 #00a680;
+  height: 42px;
+  width: 166px;
+}
+
+.checkout {
+  border: 1px solid rgb(214, 214, 214);
+  border-collapse: collapse;
+  margin-left: 8px;
+  border-left-width: 0;
+  box-shadow: -8px 0 0 #ef6945;
+  height: 42px;
+  width: 166px;
+}
+
+.guests {
+  border: 1px solid rgb(214, 214, 214);
+  border-collapse: collapse;
+  height: 42px;
+  width: 350px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltiptext {
+  width: 120px;
+  background-color: #fff;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  /*  position: absolute;*/
+  z-index: 1;
+  bottom: 125%;
+  left: 105%;
+  margin-left: -60px;
+  opacity: 1;
+  transition: opacity 0.3s;
+}

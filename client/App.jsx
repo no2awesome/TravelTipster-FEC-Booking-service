@@ -1,6 +1,7 @@
 import React from 'react';
 import css from './stylesheet.css';
 import $ from 'jquery';
+
 // import 'bootstrap';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -8,7 +9,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      view: 'checkin',
+      view: 'default',
       check_in_date: null,
       check_out_date: null,
       dateInputToggle: true,
@@ -17,6 +18,21 @@ export default class App extends React.Component {
     this.handleCheckin = this.handleCheckin.bind(this);
     this.enterCheckin = this.enterCheckin.bind(this);
   }
+
+  // componentDidMount() {
+  //   Date.prototype.yyyymmdd = function() {
+  //     var mm = this.getMonth() + 1; // getMonth() is zero-based
+  //     var dd = this.getDate();
+
+  //     return [this.getFullYear(), (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join('');
+  //   };
+
+  //   var date = new Date();
+
+  //   this.setState({
+  //     check_in_date: date.yyyymmdd()
+  //   });
+  // }
 
   handleCheckin() {
     this.setState({
@@ -37,7 +53,7 @@ export default class App extends React.Component {
     } else {
       if (this.state.check_in_date < `${year}${month}${date}`) {
         $.get(
-          `${window.location.href}vacancy?check_in_date=${
+          `http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/vacancy?check_in_date=${
             this.state.check_in_date
           }&check_out_date=${year}${month}${date}&number_of_rooms=1&number_of_adults=2&number_of_children=2`,
           offerData => {
@@ -54,7 +70,15 @@ export default class App extends React.Component {
 
   render() {
     if (this.state.view === 'default') {
-      return <Default onclick={this.handleCheckin} />;
+      return (
+        <Default
+          onclick={this.handleCheckin}
+          check_in_date={this.state.check_in_date}
+          check_out_date={this.state.check_out_date}
+          onclickin={this.enterCheckin}
+          offerData={this.state.offerData}
+        />
+      );
     } else if (this.state.view === 'checkin') {
       return (
         <Checkin
@@ -69,13 +93,47 @@ export default class App extends React.Component {
 }
 
 class Default extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hover: false
+    };
+  }
+
+  handleMouseIn() {
+    this.setState({ hover: !this.state.hover });
+  }
+
   render() {
+    const tooltipStyle = {
+      display: this.state.hover ? 'block' : 'none'
+    };
+
     return (
-      <div class="row">
-        <div class="column" onClick={this.props.onclick}>
-          check in
+      <div>
+        <div>
+          <button class="checkin" onClick={this.props.onclick}>
+            Check In
+            <br />
+            {this.props.check_in_date}
+            {/* <div>on hover here we will show the tooltip</div>
+            <div>
+              <div class="tooltip tooltiptext" style={tooltipStyle}>
+                this is the tooltip!!
+              </div>
+            </div> */}
+          </button>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="checkout" onClick={this.props.onclick}>
+            Check Out
+            <br />
+            {this.props.check_out_date}
+          </button>
         </div>
-        <div class="column">check out</div>
+        <br />
+        <div>
+          <button class="guests">Guests</button>
+        </div>
       </div>
     );
   }
@@ -85,7 +143,8 @@ class Checkin extends React.Component {
   offerData() {
     if (this.props.offerData) {
       console.table(this.props.offerData);
-      return this.props.offerData.map(offer => (
+      let offerDataTop4 = this.props.offerData.slice(0, 3);
+      return offerDataTop4.map(offer => (
         <tr>
           <td>{offer.brokerage.name}</td>
           <td>
@@ -201,9 +260,9 @@ class Checkin extends React.Component {
     };
 
     return (
-      <div>
-        <div>Check In {this.props.check_in_date}</div>
-        <div>Check Out {this.props.check_out_date}</div>
+      <div class="row">
+        <div class="column">Check In {this.props.check_in_date}</div>
+        <div class="column">Check Out {this.props.check_out_date}</div>
         <div class="row">
           <div class="column">
             <h2 class="month">
