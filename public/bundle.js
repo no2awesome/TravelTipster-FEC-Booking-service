@@ -142,6 +142,7 @@ var App = function (_React$Component) {
     };
     _this.handleCheckin = _this.handleCheckin.bind(_this);
     _this.enterCheckin = _this.enterCheckin.bind(_this);
+    _this.dateReset = _this.dateReset.bind(_this);
     return _this;
   }
 
@@ -161,6 +162,16 @@ var App = function (_React$Component) {
   // }
 
   _createClass(App, [{
+    key: 'dateReset',
+    value: function dateReset() {
+      console.log('data reset');
+      this.setState({
+        check_in_date: null,
+        check_out_date: null,
+        offerData: null
+      });
+    }
+  }, {
     key: 'handleCheckin',
     value: function handleCheckin() {
       this.setState({
@@ -183,7 +194,9 @@ var App = function (_React$Component) {
         });
       } else {
         if (this.state.check_in_date < '' + year + month + date) {
-          _jquery2.default.get('http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/0/vacancy?check_in_date=' + this.state.check_in_date + '&check_out_date=' + year + month + date + '&number_of_rooms=1&number_of_adults=2&number_of_children=2', function (offerData) {
+          _jquery2.default.get(
+          // http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com
+          'http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/0/vacancy?check_in_date=' + this.state.check_in_date + '&check_out_date=' + year + month + date + '&number_of_rooms=1&number_of_adults=2&number_of_children=2', function (offerData) {
             _this2.setState({
               check_out_date: '' + year + month + date,
               dateInputToggle: !_this2.state.dateInputToggle,
@@ -196,25 +209,17 @@ var App = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      if (this.state.view === 'default') {
-        return _react2.default.createElement(
-          'div',
-          null,
-          _react2.default.createElement(Checkin, {
-            check_in_date: this.state.check_in_date,
-            check_out_date: this.state.check_out_date,
-            onclickin: this.enterCheckin,
-            offerData: this.state.offerData
-          })
-        );
-      } else if (this.state.view === 'checkin') {
-        return _react2.default.createElement(Checkin, {
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(Checkin, {
           check_in_date: this.state.check_in_date,
           check_out_date: this.state.check_out_date,
           onclickin: this.enterCheckin,
+          dateReset: this.dateReset,
           offerData: this.state.offerData
-        });
-      }
+        })
+      );
     }
   }]);
 
@@ -245,10 +250,6 @@ var Default = function (_React$Component2) {
   }, {
     key: 'render',
     value: function render() {
-      var tooltipStyle = {
-        display: this.state.hover ? 'block' : 'none'
-      };
-
       return _react2.default.createElement(
         'div',
         null,
@@ -291,10 +292,15 @@ var Default = function (_React$Component2) {
 var Checkin = function (_React$Component3) {
   _inherits(Checkin, _React$Component3);
 
-  function Checkin() {
+  function Checkin(props) {
     _classCallCheck(this, Checkin);
 
-    return _possibleConstructorReturn(this, (Checkin.__proto__ || Object.getPrototypeOf(Checkin)).apply(this, arguments));
+    var _this4 = _possibleConstructorReturn(this, (Checkin.__proto__ || Object.getPrototypeOf(Checkin)).call(this, props));
+
+    _this4.state = {
+      hover: false
+    };
+    return _this4;
   }
 
   _createClass(Checkin, [{
@@ -325,7 +331,11 @@ var Checkin = function (_React$Component3) {
             _react2.default.createElement(
               'td',
               { 'class': 'deal' },
-              'View Deal'
+              _react2.default.createElement(
+                'b',
+                null,
+                'View Deal'
+              )
             )
           );
         });
@@ -343,9 +353,24 @@ var Checkin = function (_React$Component3) {
       }
     }
   }, {
+    key: 'handleMouseIn',
+    value: function handleMouseIn() {
+      console.log('clicked');
+      this.setState({ hover: !this.state.hover });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this5 = this;
+
+      if (this.props.check_out_date && this.state.hover) {
+        console.log('hover false');
+        this.setState({ hover: false });
+      }
+
+      var tooltipStyle = {
+        display: this.state.hover ? 'block' : 'none'
+      };
 
       var today = new Date();
       var thisYear = today.getFullYear();
@@ -434,7 +459,13 @@ var Checkin = function (_React$Component3) {
           null,
           _react2.default.createElement(
             'button',
-            { 'class': 'checkin' },
+            {
+              'class': 'checkin',
+              onClick: function onClick() {
+                _this5.props.dateReset();
+                _this5.handleMouseIn.bind(_this5)();
+              }
+            },
             'Check In',
             _react2.default.createElement('br', null),
             this.props.check_in_date
@@ -458,119 +489,124 @@ var Checkin = function (_React$Component3) {
             'Guests'
           )
         ),
+        _react2.default.createElement('br', null),
         _react2.default.createElement(
           'div',
-          { 'class': 'row' },
+          { 'class': 'tooltip tooltiptext', style: tooltipStyle },
           _react2.default.createElement(
             'div',
-            { 'class': 'column' },
+            { 'class': 'row' },
             _react2.default.createElement(
-              'h2',
-              { 'class': 'month' },
-              monthNames[thisMonth],
-              ' ',
-              thisYear
+              'div',
+              { 'class': 'column' },
+              _react2.default.createElement(
+                'h2',
+                { 'class': 'month' },
+                monthNames[thisMonth],
+                ' ',
+                thisYear
+              ),
+              _react2.default.createElement(
+                'table',
+                null,
+                _react2.default.createElement('tr', null),
+                _react2.default.createElement(
+                  'tr',
+                  null,
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'SUN'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'MON'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'TUE'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'WED'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'THU'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'FRI'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'SAT'
+                  )
+                ),
+                createCalendar(thisMonth)
+              )
             ),
             _react2.default.createElement(
-              'table',
-              null,
-              _react2.default.createElement('tr', null),
+              'div',
+              { 'class': 'column' },
               _react2.default.createElement(
-                'tr',
-                null,
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'SUN'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'MON'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'TUE'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'WED'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'THU'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'FRI'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'SAT'
-                )
+                'h2',
+                { 'class': 'month' },
+                monthNames[(thisMonth + 1) % 12],
+                ' ',
+                thisYear
               ),
-              createCalendar(thisMonth)
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'column' },
-            _react2.default.createElement(
-              'h2',
-              { 'class': 'month' },
-              monthNames[(thisMonth + 1) % 12],
-              ' ',
-              thisYear
-            ),
-            _react2.default.createElement(
-              'table',
-              null,
-              _react2.default.createElement('tr', null),
               _react2.default.createElement(
-                'tr',
+                'table',
                 null,
+                _react2.default.createElement('tr', null),
                 _react2.default.createElement(
-                  'th',
+                  'tr',
                   null,
-                  'SUN'
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'SUN'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'MON'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'TUE'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'WED'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'THU'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'FRI'
+                  ),
+                  _react2.default.createElement(
+                    'th',
+                    null,
+                    'SAT'
+                  )
                 ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'MON'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'TUE'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'WED'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'THU'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'FRI'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  null,
-                  'SAT'
-                )
-              ),
-              createCalendar(thisMonth + 1)
+                createCalendar(thisMonth + 1)
+              )
             )
           )
         ),
@@ -659,7 +695,7 @@ if(false) {}
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".column {\n  float: left;\n  width: 50%;\n}\n\ntable,\nth,\ntd {\n  border-collapse: collapse;\n}\n\nth,\ntd {\n  font-size: 17px;\n  padding: 10px;\n}\n\n.enabled:hover {\n  cursor: pointer;\n  background-color: SeaGreen;\n  color: white;\n}\n\n.past {\n  color: silver;\n}\n\n.today {\n  vertical-align: super;\n  color: SeaGreen;\n}\n\n/* Clear floats after the columns */\n.row:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}\n\n#offers {\n  border-collapse: collapse;\n  width: fit-content;\n}\n\n#offers td,\n#offers th {\n  border: 1px solid #ddd;\n  padding: 16px;\n}\n\n#offers tr:hover {\n  background-color: #ddd;\n}\n\n#offers th {\n  padding-top: 12px;\n  padding-bottom: 12px;\n  text-align: left;\n  background-color: #4CAF50;\n  color: white;\n}\n\n.deal {\n  background-color: gold;\n}\n\n.tooltip {\n  position: relative;\n  display: inline-block;\n  border-bottom: 1px dotted black;\n}\n\n.checkin {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  margin-left: 8px;\n  border-left-width: 0;\n  box-shadow: -8px 0 0 #00a680;\n  height: 42px;\n  width: 166px;\n}\n\n.checkout {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  margin-left: 8px;\n  border-left-width: 0;\n  box-shadow: -8px 0 0 #ef6945;\n  height: 42px;\n  width: 166px;\n}\n\n.guests {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  height: 42px;\n  width: 350px;\n}\n\n.tooltip {\n  position: relative;\n  display: inline-block;\n  border-bottom: 1px dotted black;\n}\n\n.tooltiptext {\n  width: 120px;\n  background-color: #fff;\n  color: black;\n  text-align: center;\n  border-radius: 6px;\n  padding: 5px 0;\n  /*  position: absolute;*/\n  z-index: 1;\n  bottom: 125%;\n  left: 105%;\n  margin-left: -60px;\n  opacity: 1;\n  transition: opacity 0.3s;\n}", ""]);
+exports.push([module.i, ".column {\n  float: left;\n  width: 50%;\n}\n\ntable,\nth,\ntd {\n  border-collapse: collapse;\n}\n\nth,\ntd {\n  font-size: 17px;\n  padding: 10px;\n}\n\n.enabled:hover {\n  cursor: pointer;\n  background-color: SeaGreen;\n  color: white;\n}\n\n.past {\n  color: silver;\n}\n\n.today {\n  vertical-align: super;\n  color: SeaGreen;\n}\n\n/* Clear floats after the columns */\n.row:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}\n\n#offers {\n  border-collapse: collapse;\n  width: fit-content;\n}\n\n#offers td,\n#offers th {\n  border: 1px solid #ddd;\n  padding: 16px;\n}\n\n#offers tr:hover {\n  background-color: #ddd;\n}\n\n#offers th {\n  padding-top: 12px;\n  padding-bottom: 12px;\n  text-align: left;\n  background-color: #4CAF50;\n  color: white;\n}\n\n.deal {\n  background-color: gold;\n}\n\n.tooltip {\n  position: relative;\n  display: inline-block;\n  border-bottom: 1px dotted black;\n}\n\n.checkin {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  margin-left: 8px;\n  border-left-width: 0;\n  box-shadow: -8px 0 0 #00a680;\n  height: 42px;\n  width: 166px;\n}\n\n.checkout {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  margin-left: 8px;\n  border-left-width: 0;\n  box-shadow: -8px 0 0 #ef6945;\n  height: 42px;\n  width: 166px;\n}\n\n.guests {\n  border: 1px solid rgb(214, 214, 214);\n  border-collapse: collapse;\n  height: 42px;\n  width: 350px;\n}\n\n.tooltip {\n  position: relative;\n  display: inline-block;\n  border: 1px solid rgb(214, 214, 214);\n}\n\n.tooltiptext {\n  width: 800px;\n  background-color: #fff;\n  color: black;\n  text-align: center;\n  border-radius: 6px;\n  padding: 5px 0;\n  /*  position: absolute;*/\n  z-index: 1;\n  bottom: 125%;\n  left: 220px;\n  margin-left: -60px;\n  opacity: 1;\n  transition: opacity 0.3s;\n}", ""]);
 
 
 

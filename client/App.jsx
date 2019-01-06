@@ -17,6 +17,7 @@ export default class App extends React.Component {
     };
     this.handleCheckin = this.handleCheckin.bind(this);
     this.enterCheckin = this.enterCheckin.bind(this);
+    this.dateReset = this.dateReset.bind(this);
   }
 
   // componentDidMount() {
@@ -33,6 +34,15 @@ export default class App extends React.Component {
   //     check_in_date: date.yyyymmdd()
   //   });
   // }
+
+  dateReset() {
+    console.log('data reset');
+    this.setState({
+      check_in_date: null,
+      check_out_date: null,
+      offerData: null
+    });
+  }
 
   handleCheckin() {
     this.setState({
@@ -53,6 +63,7 @@ export default class App extends React.Component {
     } else {
       if (this.state.check_in_date < `${year}${month}${date}`) {
         $.get(
+          // http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com
           `http://traveltipster-fec-booking-service-dev.us-west-2.elasticbeanstalk.com/0/vacancy?check_in_date=${
             this.state.check_in_date
           }&check_out_date=${year}${month}${date}&number_of_rooms=1&number_of_adults=2&number_of_children=2`,
@@ -69,27 +80,17 @@ export default class App extends React.Component {
   }
 
   render() {
-    if (this.state.view === 'default') {
-      return (
-        <div>
-          <Checkin
-            check_in_date={this.state.check_in_date}
-            check_out_date={this.state.check_out_date}
-            onclickin={this.enterCheckin}
-            offerData={this.state.offerData}
-          />
-        </div>
-      );
-    } else if (this.state.view === 'checkin') {
-      return (
+    return (
+      <div>
         <Checkin
           check_in_date={this.state.check_in_date}
           check_out_date={this.state.check_out_date}
           onclickin={this.enterCheckin}
+          dateReset={this.dateReset}
           offerData={this.state.offerData}
         />
-      );
-    }
+      </div>
+    );
   }
 }
 
@@ -106,10 +107,6 @@ class Default extends React.Component {
   }
 
   render() {
-    const tooltipStyle = {
-      display: this.state.hover ? 'block' : 'none'
-    };
-
     return (
       <div>
         <div>
@@ -141,6 +138,13 @@ class Default extends React.Component {
 }
 
 class Checkin extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hover: false
+    };
+  }
+
   offerData() {
     if (this.props.offerData) {
       console.table(this.props.offerData);
@@ -151,7 +155,9 @@ class Checkin extends React.Component {
           <td>
             <b>${offer.price}</b>
           </td>
-          <td class="deal">View Deal</td>
+          <td class="deal">
+            <b>View Deal</b>
+          </td>
         </tr>
       ));
     }
@@ -175,7 +181,21 @@ class Checkin extends React.Component {
     }
   }
 
+  handleMouseIn() {
+    console.log('clicked');
+    this.setState({ hover: !this.state.hover });
+  }
+
   render() {
+    if (this.props.check_out_date && this.state.hover) {
+      console.log('hover false');
+      this.setState({ hover: false });
+    }
+
+    const tooltipStyle = {
+      display: this.state.hover ? 'block' : 'none'
+    };
+
     let today = new Date();
     let thisYear = today.getFullYear();
     let thisMonth = today.getMonth();
@@ -283,16 +303,16 @@ class Checkin extends React.Component {
     return (
       <div class="row">
         <div>
-          <button class="checkin">
+          <button
+            class="checkin"
+            onClick={() => {
+              this.props.dateReset();
+              this.handleMouseIn.bind(this)();
+            }}
+          >
             Check In
             <br />
             {this.props.check_in_date}
-            {/* <div>on hover here we will show the tooltip</div>
-            <div>
-              <div class="tooltip tooltiptext" style={tooltipStyle}>
-                this is the tooltip!!
-              </div>
-            </div> */}
           </button>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <button class="checkout">
@@ -305,44 +325,48 @@ class Checkin extends React.Component {
         <div>
           <button class="guests">Guests</button>
         </div>
+        <br />
         {/* <div class="column">Check In {this.props.check_in_date}</div>
         <div class="column">Check Out {this.props.check_out_date}</div> */}
-        <div class="row">
-          <div class="column">
-            <h2 class="month">
-              {monthNames[thisMonth]} {thisYear}
-            </h2>
-            <table>
-              <tr />
-              <tr>
-                <th>SUN</th>
-                <th>MON</th>
-                <th>TUE</th>
-                <th>WED</th>
-                <th>THU</th>
-                <th>FRI</th>
-                <th>SAT</th>
-              </tr>
-              {createCalendar(thisMonth)}
-            </table>
-          </div>
-          <div class="column">
-            <h2 class="month">
-              {monthNames[(thisMonth + 1) % 12]} {thisYear}
-            </h2>
-            <table>
-              <tr />
-              <tr>
-                <th>SUN</th>
-                <th>MON</th>
-                <th>TUE</th>
-                <th>WED</th>
-                <th>THU</th>
-                <th>FRI</th>
-                <th>SAT</th>
-              </tr>
-              {createCalendar(thisMonth + 1)}
-            </table>
+
+        <div class="tooltip tooltiptext" style={tooltipStyle}>
+          <div class="row">
+            <div class="column">
+              <h2 class="month">
+                {monthNames[thisMonth]} {thisYear}
+              </h2>
+              <table>
+                <tr />
+                <tr>
+                  <th>SUN</th>
+                  <th>MON</th>
+                  <th>TUE</th>
+                  <th>WED</th>
+                  <th>THU</th>
+                  <th>FRI</th>
+                  <th>SAT</th>
+                </tr>
+                {createCalendar(thisMonth)}
+              </table>
+            </div>
+            <div class="column">
+              <h2 class="month">
+                {monthNames[(thisMonth + 1) % 12]} {thisYear}
+              </h2>
+              <table>
+                <tr />
+                <tr>
+                  <th>SUN</th>
+                  <th>MON</th>
+                  <th>TUE</th>
+                  <th>WED</th>
+                  <th>THU</th>
+                  <th>FRI</th>
+                  <th>SAT</th>
+                </tr>
+                {createCalendar(thisMonth + 1)}
+              </table>
+            </div>
           </div>
         </div>
         <div>
