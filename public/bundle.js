@@ -336,6 +336,8 @@ var Checkin = function (_React$Component3) {
     value: function setStyleCheckIn(month, day) {
       if (this.props.check_in_date && parseInt(this.props.check_in_date.slice(-4, -2)) === month + 1 && parseInt(this.props.check_in_date.slice(-2)) === day) {
         return { border: '1px solid SeaGreen' };
+      } else if (this.props.check_out_date && parseInt(this.props.check_out_date.slice(-4, -2)) === month + 1 && parseInt(this.props.check_out_date.slice(-2)) === day) {
+        return { border: '1px solid #ef6945' };
       } else {
         return { border: 'white' };
       }
