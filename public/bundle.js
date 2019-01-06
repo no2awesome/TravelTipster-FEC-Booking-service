@@ -279,7 +279,9 @@ var Default = function (_React$Component2) {
           _react2.default.createElement(
             'button',
             { 'class': 'guests' },
-            'Guests'
+            'Guests',
+            _react2.default.createElement('br', null),
+            '1 room, 2 adults, 1 child'
           )
         )
       );

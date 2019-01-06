@@ -130,7 +130,10 @@ class Default extends React.Component {
         </div>
         <br />
         <div>
-          <button class="guests">Guests</button>
+          <button class="guests">
+            Guests
+            <br />1 room, 2 adults, 1 child
+          </button>
         </div>
       </div>
     );
