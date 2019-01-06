@@ -197,13 +197,16 @@ var App = function (_React$Component) {
     key: 'render',
     value: function render() {
       if (this.state.view === 'default') {
-        return _react2.default.createElement(Default, {
-          onclick: this.handleCheckin,
-          check_in_date: this.state.check_in_date,
-          check_out_date: this.state.check_out_date,
-          onclickin: this.enterCheckin,
-          offerData: this.state.offerData
-        });
+        return _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(Checkin, {
+            check_in_date: this.state.check_in_date,
+            check_out_date: this.state.check_out_date,
+            onclickin: this.enterCheckin,
+            offerData: this.state.offerData
+          })
+        );
       } else if (this.state.view === 'checkin') {
         return _react2.default.createElement(Checkin, {
           check_in_date: this.state.check_in_date,
@@ -414,15 +417,32 @@ var Checkin = function (_React$Component3) {
         { 'class': 'row' },
         _react2.default.createElement(
           'div',
-          { 'class': 'column' },
-          'Check In ',
-          this.props.check_in_date
+          null,
+          _react2.default.createElement(
+            'button',
+            { 'class': 'checkin' },
+            'Check In',
+            _react2.default.createElement('br', null),
+            this.props.check_in_date
+          ),
+          '\xA0\xA0\xA0\xA0\xA0\xA0',
+          _react2.default.createElement(
+            'button',
+            { 'class': 'checkout' },
+            'Check Out',
+            _react2.default.createElement('br', null),
+            this.props.check_out_date
+          )
         ),
+        _react2.default.createElement('br', null),
         _react2.default.createElement(
           'div',
-          { 'class': 'column' },
-          'Check Out ',
-          this.props.check_out_date
+          null,
+          _react2.default.createElement(
+            'button',
+            { 'class': 'guests' },
+            'Guests'
+          )
         ),
         _react2.default.createElement(
           'div',

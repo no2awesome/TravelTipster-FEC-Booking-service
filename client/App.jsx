@@ -71,13 +71,14 @@ export default class App extends React.Component {
   render() {
     if (this.state.view === 'default') {
       return (
-        <Default
-          onclick={this.handleCheckin}
-          check_in_date={this.state.check_in_date}
-          check_out_date={this.state.check_out_date}
-          onclickin={this.enterCheckin}
-          offerData={this.state.offerData}
-        />
+        <div>
+          <Checkin
+            check_in_date={this.state.check_in_date}
+            check_out_date={this.state.check_out_date}
+            onclickin={this.enterCheckin}
+            offerData={this.state.offerData}
+          />
+        </div>
       );
     } else if (this.state.view === 'checkin') {
       return (
@@ -261,8 +262,31 @@ class Checkin extends React.Component {
 
     return (
       <div class="row">
-        <div class="column">Check In {this.props.check_in_date}</div>
-        <div class="column">Check Out {this.props.check_out_date}</div>
+        <div>
+          <button class="checkin">
+            Check In
+            <br />
+            {this.props.check_in_date}
+            {/* <div>on hover here we will show the tooltip</div>
+            <div>
+              <div class="tooltip tooltiptext" style={tooltipStyle}>
+                this is the tooltip!!
+              </div>
+            </div> */}
+          </button>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="checkout">
+            Check Out
+            <br />
+            {this.props.check_out_date}
+          </button>
+        </div>
+        <br />
+        <div>
+          <button class="guests">Guests</button>
+        </div>
+        {/* <div class="column">Check In {this.props.check_in_date}</div>
+        <div class="column">Check Out {this.props.check_out_date}</div> */}
         <div class="row">
           <div class="column">
             <h2 class="month">
