@@ -6,7 +6,7 @@ var randomEmail = faker.internet.email(); // Kassandra.Haley@erich.biz
 var randomCard = faker.helpers.createCard(); // random contact card containing many properties
 
 let connection = db.createConnection({
-  host: "localhost",
+  host: "aa1iibwgognyt5p.ccnl4smt7re2.us-west-2.rds.amazonaws.com",
   user: "root",
   password: "password",
   database: "traveltipster"
@@ -15,11 +15,7 @@ let connection = db.createConnection({
 connection.connect();
 
 for (let i = 0; i < 100; i++) {
-    connection.query(`insert into hotel (id, name) values (${i}, ${connection.escape(faker.company.companyName())})`);
-}
-
-for (let i = 0; i < 100; i++) {
-    connection.query(`insert into brokerage (id, name) values (${i}, ${connection.escape(faker.company.companyName())})`);
+  connection.query(`insert into hotel (id, name) values (${i}, ${connection.escape(faker.company.companyName())})`);
 }
 
 for (let i = 0; i < 100; i++) {
